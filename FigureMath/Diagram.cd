@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="FigureMath.Figures.Circle" BaseTypeListCollapsed="true">
+    <Position X="6.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAEQAAAAAAAAAAAAAAAEAAAAAEAAAAAA=</HashCode>
+      <FileName>Figures\Circle.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="FigureMath.Figures.EquilateralTriangle">
+    <Position X="13.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QABAAAAAAAQiAEQAAAADAABAAABAAAEABCAAEACACAI=</HashCode>
+      <FileName>Figures\EquilateralTriangle.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FigureMath.Figures.IsoscelesTriangle">
+    <Position X="15" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QABAAAAAAAQiAEQAAAADAABAAABAAAEABCAAEACACAI=</HashCode>
+      <FileName>Figures\IsoscelesTriangle.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FigureMath.Figures.Parallelogram">
+    <Position X="12" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAQgAGQAAAADAAAAAAAAAAEAACAAEACADgI=</HashCode>
+      <FileName>Figures\Parallelogram.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FigureMath.Figures.Rectangle">
+    <Position X="15" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAQiAGQAAAADAAAAAAAAAAEAACAAEACADgI=</HashCode>
+      <FileName>Figures\Rectangle.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FigureMath.Figures.Rhombus">
+    <Position X="18" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAQiAGQAAAADAAAAAAAAAAEAACAAEACADgI=</HashCode>
+      <FileName>Figures\Rhombus.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FigureMath.Figures.RightTriangle">
+    <Position X="16.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QABAAAAAAAQiAEQAAAADAABAAABAAAEABCAAEACACAI=</HashCode>
+      <FileName>Figures\RightTriangle.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FigureMath.Figures.Square">
+    <Position X="13.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAQiAGQAAAADAAAAAAAAAAEAACAAEACADgI=</HashCode>
+      <FileName>Figures\Square.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FigureMath.Figures.Trapeze">
+    <Position X="16.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAQgAGQAAAADAAAAAAAAAAEAACAAEACADgI=</HashCode>
+      <FileName>Figures\Trapeze.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FigureMath.Abstractions.Triangle">
+    <Position X="10.25" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QABAAAAAAAQgAEAAAAADAABAAABAAAEABCAAEACACAI=</HashCode>
+      <FileName>Abstractions\Triangle.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FigureMath.Exceptions.FigureMathException">
+    <Position X="8.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\FigureMathException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FigureMath.Helpers.FigureMathHelper">
+    <Position X="6.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAACIAAgAAAAAAAAACAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Helpers\FigureMathHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FigureMath.Figures.ArbitraryTriangle">
+    <Position X="12" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QABAAAAAAAQgAEQAAAADAABAAABAAAEABCAAEACACAI=</HashCode>
+      <FileName>Figures\ArbitraryTriangle.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FigureMath.Abstractions.Quadrangle">
+    <Position X="10.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAQgAGAAAAADAAAAAAAAAAEAACAAEACADgI=</HashCode>
+      <FileName>Abstractions\Quadrangle.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="FigureMath.Interfaces.IComparer">
+    <Position X="8.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IComparer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FigureMath.Interfaces.IFigure">
+    <Position X="8.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAEAAAAAEAAAAAA=</HashCode>
+      <FileName>Interfaces\IFigure.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
