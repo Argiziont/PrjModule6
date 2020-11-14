@@ -79,6 +79,7 @@ namespace FigureMath.Figures
                              AbDirect * BcDirect * CdDirect * DaDirect * Math.Pow(
                                  Math.Cos((FigureMathHelper.GetDegreesToRadians(GetAngles()[0]) +
                                            FigureMathHelper.GetDegreesToRadians(GetAngles()[2])) / 2), 2));
+
         }
 
         /// <summary>
