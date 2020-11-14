@@ -7,11 +7,11 @@ namespace FigureMath.Abstractions
     public abstract class Triangle : IFigure
     {
         public abstract double[] AVertex { get; }
-        public abstract double[] BVertex { get;}
-        public abstract double[] CVertex { get;}
-        protected abstract double AbDirect { get;}
-        protected abstract double BcDirect { get;}
-        protected abstract double CaDirect { get;}
+        public abstract double[] BVertex { get; }
+        public abstract double[] CVertex { get; }
+        protected abstract double AbDirect { get; }
+        protected abstract double BcDirect { get; }
+        protected abstract double CaDirect { get; }
         protected abstract double HalfPerimeter { get; }
         public abstract double GetArea();
 

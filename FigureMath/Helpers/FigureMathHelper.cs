@@ -6,19 +6,22 @@ namespace FigureMath.Helpers
     {
         public static double GetDirectLength(double[] firstVertex, double[] secondVertex)
         {
-            return Math.Sqrt(Math.Pow(secondVertex[0] - firstVertex[0], 2)+ Math.Pow(secondVertex[1] - firstVertex[1], 2));
+            return Math.Sqrt(Math.Pow(secondVertex[0] - firstVertex[0], 2) +
+                             Math.Pow(secondVertex[1] - firstVertex[1], 2));
         }
+
         public static double GetRadiansToDegrees(double radians)
         {
-            return (180 / Math.PI) * radians;
+            return 180 / Math.PI * radians;
         }
+
         public static double GetDegreesToRadians(double degrees)
         {
-            return degrees/(180 / Math.PI);
+            return degrees / (180 / Math.PI);
         }
 
         /// <summary>
-        /// Returns angle between vertexes
+        ///     Returns angle between vertexes
         /// </summary>
         /// <param name="firstVertex">First Vertex</param>
         /// <param name="secondVertex">Second Vertex</param>
@@ -26,13 +29,13 @@ namespace FigureMath.Helpers
         /// <returns>Return angle near second Vertex</returns>
         public static double GetAngleBetweenVertex(double[] firstVertex, double[] secondVertex, double[] thirdVertex)
         {
-            var aLength = FigureMathHelper.GetDirectLength(thirdVertex, secondVertex);
+            var aLength = GetDirectLength(thirdVertex, secondVertex);
 
-            var bLength = FigureMathHelper.GetDirectLength(firstVertex, thirdVertex);
+            var bLength = GetDirectLength(firstVertex, thirdVertex);
 
-            var cLength = FigureMathHelper.GetDirectLength(firstVertex, secondVertex);
+            var cLength = GetDirectLength(firstVertex, secondVertex);
 
-            return FigureMathHelper.GetRadiansToDegrees(Math.Acos(
+            return GetRadiansToDegrees(Math.Acos(
                 (Math.Pow(aLength, 2) + Math.Pow(cLength, 2) - Math.Pow(bLength, 2)) / (2 * aLength * cLength)));
         }
 
@@ -43,7 +46,7 @@ namespace FigureMath.Helpers
             var firstSlope = (firstVertexFirstLine[1] - secondVertexFirstLine[1]) /
                              (firstVertexFirstLine[0] - secondVertexFirstLine[0]);
             var secondSlope = (firstVertexSecondLine[1] - secondVertexSecondLine[1]) /
-                             (firstVertexSecondLine[0] - secondVertexSecondLine[0]);
+                              (firstVertexSecondLine[0] - secondVertexSecondLine[0]);
             return Math.Abs(firstSlope - secondSlope) < tolerance;
         }
     }

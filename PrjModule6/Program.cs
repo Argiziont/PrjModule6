@@ -1,12 +1,13 @@
-﻿using FigureMath.Abstractions;
-using FigureMath.Exceptions;
-using FigureMath.Figures;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
+using FigureMath.Abstractions;
+using FigureMath.Exceptions;
+using FigureMath.Figures;
 
 namespace PrjModule6
 {
@@ -14,15 +15,13 @@ namespace PrjModule6
     {
         private static void Main()
         {
-
             //Dot in console
-            var customCulture = (CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+            var customCulture = (CultureInfo) Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
-            System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+            Thread.CurrentThread.CurrentCulture = customCulture;
             //
             while (true)
             {
-
                 Console.WriteLine("Choose your figure(circle|quadrangle|triangle|deserialize)");
                 var figureType = Console.ReadLine();
                 switch (figureType)
@@ -37,15 +36,15 @@ namespace PrjModule6
                         GetTriangleMethods();
                         break;
                     case "deserialize":
-                        BinaryFormatter formatter = new BinaryFormatter();
+                        var formatter = new BinaryFormatter();
                         if (File.Exists("Figure.dat"))
                         {
-                            using FileStream fs = new FileStream("Figure.dat", FileMode.OpenOrCreate);
+                            using var fs = new FileStream("Figure.dat", FileMode.OpenOrCreate);
                             var figureDeserialize = formatter.Deserialize(fs);
 
                             if (figureDeserialize.GetType().Name == "Circle")
                             {
-                                var circle = (Circle)figureDeserialize;
+                                var circle = (Circle) figureDeserialize;
                                 Console.WriteLine("Deserializes object is Circle");
                                 GetCircleMethods(circle.Radius);
                             }
@@ -54,14 +53,21 @@ namespace PrjModule6
                             switch (baseType)
                             {
                                 case "Quadrangle":
-                                    var quadrangle = (Quadrangle)figureDeserialize;
+                                    var quadrangle = (Quadrangle) figureDeserialize;
                                     Console.WriteLine("Deserializes object is Quadrangle");
-                                    GetQuadrangleMethods(new List<double[]>(){ quadrangle.AVertex, quadrangle.BVertex, quadrangle.CVertex, quadrangle.DVertex }, figureDeserialize.GetType().Name);
+                                    GetQuadrangleMethods(
+                                        new List<double[]>
+                                        {
+                                            quadrangle.AVertex, quadrangle.BVertex, quadrangle.CVertex,
+                                            quadrangle.DVertex
+                                        }, figureDeserialize.GetType().Name);
                                     break;
                                 case "Triangle":
-                                    var triangle = (Triangle)figureDeserialize;
+                                    var triangle = (Triangle) figureDeserialize;
                                     Console.WriteLine("Deserializes object is Triangle");
-                                    GetTriangleMethods(new List<double[]>() { triangle.AVertex, triangle.BVertex, triangle.CVertex}, figureDeserialize.GetType().Name);
+                                    GetTriangleMethods(
+                                        new List<double[]> {triangle.AVertex, triangle.BVertex, triangle.CVertex},
+                                        figureDeserialize.GetType().Name);
                                     break;
                                 default:
                                     ConsoleWithColor("\nWrong base type\n", ConsoleColor.Red);
@@ -72,8 +78,8 @@ namespace PrjModule6
                         {
                             ConsoleWithColor("\nThere no serialized objects\n", ConsoleColor.Red);
                             continue;
-                            
                         }
+
                         break;
                     default:
                         ConsoleWithColor("\nThere no such variant\n", ConsoleColor.Red);
@@ -82,7 +88,7 @@ namespace PrjModule6
 
                 Console.WriteLine("Press 'e' for exit or enter for continue");
 
-                ConsoleKeyInfo exitState = Console.ReadKey();
+                var exitState = Console.ReadKey();
                 switch (exitState.Key)
                 {
                     case ConsoleKey.Enter:
@@ -94,16 +100,15 @@ namespace PrjModule6
                         return;
                 }
             }
-
         }
-        private static void GetCircleMethods(double radius=0)
-        {
 
+        private static void GetCircleMethods(double radius = 0)
+        {
             while (true)
             {
-                if (radius==0) Console.Write("Write your circle radius: ");
+                if (radius == 0) Console.Write("Write your circle radius: ");
 
-                var circleRadius = radius == 0?Console.ReadLine(): radius.ToString(CultureInfo.CurrentCulture);
+                var circleRadius = radius == 0 ? Console.ReadLine() : radius.ToString(CultureInfo.CurrentCulture);
                 if (double.TryParse(circleRadius, out radius))
                 {
                     Circle circle;
@@ -140,13 +145,14 @@ namespace PrjModule6
                                     circle.GetSides().ToList().ForEach(Console.WriteLine);
                                     break;
                                 case "4":
-                                    BinaryFormatter formatter = new BinaryFormatter();
-                                    using (FileStream fs = new FileStream("Figure.dat", FileMode.Create))
+                                    var formatter = new BinaryFormatter();
+                                    using (var fs = new FileStream("Figure.dat", FileMode.Create))
                                     {
                                         formatter.Serialize(fs, circle);
 
                                         Console.WriteLine("Object serialized");
                                     }
+
                                     break;
                                 default:
                                     ConsoleWithColor("\nThere no such method\n", ConsoleColor.Red);
@@ -158,7 +164,7 @@ namespace PrjModule6
                             ConsoleWithColor(e.Message, ConsoleColor.Red);
                             continue;
                         }
-                       
+
 
                         Console.WriteLine("Press 'e' for exit or enter for continue");
 
@@ -171,7 +177,6 @@ namespace PrjModule6
                                 return;
                             default:
                                 return;
-
                         }
                     }
                 }
@@ -179,21 +184,22 @@ namespace PrjModule6
                 ConsoleWithColor("\nWrong radius please try again\n", ConsoleColor.Red);
             }
         }
-        private static void GetQuadrangleMethods(List<double[]> vertexes=null,string quadrangleType = null)
-        {
 
+        private static void GetQuadrangleMethods(List<double[]> vertexes = null, string quadrangleType = null)
+        {
             while (true)
             {
-                if (vertexes == null|| vertexes.Count==0)
+                if (vertexes == null || vertexes.Count == 0)
                 {
                     Console.Write("\nWrite your vertexes with a space(Ex: 5,7 4.4,5 7,6 1.4,8): ");
-                    
+
                     vertexes = new List<double[]>();
                     try
                     {
-                        List<string> tmpStringParseList = Console.ReadLine()?.Split(' ').ToList();
+                        var tmpStringParseList = Console.ReadLine()?.Split(' ').ToList();
                         var vertexes1 = vertexes;
-                        tmpStringParseList?.ForEach(x => { vertexes1.Add(x.Split(",").Select(double.Parse).ToArray()); });
+                        tmpStringParseList?.ForEach(
+                            x => { vertexes1.Add(x.Split(",").Select(double.Parse).ToArray()); });
                     }
                     catch
                     {
@@ -202,7 +208,7 @@ namespace PrjModule6
                         continue;
                     }
                 }
-                
+
 
                 if (vertexes.Count == 4 || vertexes.Count == 0)
                 {
@@ -210,7 +216,7 @@ namespace PrjModule6
 
                     try
                     {
-                        if (quadrangleType==null)
+                        if (quadrangleType == null)
                         {
                             Console.WriteLine("\nChose quadrangle \n" +
                                               "Parallelogram - 1\n" +
@@ -296,13 +302,14 @@ namespace PrjModule6
                                     Console.WriteLine(quadrangle?.GetInscribedCircleRadius());
                                     break;
                                 case "8":
-                                    BinaryFormatter formatter = new BinaryFormatter();
-                                    using (FileStream fs = new FileStream("Figure.dat", FileMode.Create))
+                                    var formatter = new BinaryFormatter();
+                                    using (var fs = new FileStream("Figure.dat", FileMode.Create))
                                     {
                                         formatter.Serialize(fs, quadrangle ?? throw new InvalidOperationException());
 
                                         Console.WriteLine("Object serialized");
                                     }
+
                                     break;
                                 default:
                                     ConsoleWithColor("\nThere no such method\n", ConsoleColor.Red);
@@ -315,7 +322,7 @@ namespace PrjModule6
                             vertexes.Clear();
                             continue;
                         }
-                        
+
 
                         Console.WriteLine("Press 'e' for exit or enter for continue");
 
@@ -336,6 +343,7 @@ namespace PrjModule6
                 vertexes.Clear();
             }
         }
+
         private static void GetTriangleMethods(List<double[]> vertexes = null, string triangleType = null)
         {
             while (true)
@@ -347,9 +355,10 @@ namespace PrjModule6
                     vertexes = new List<double[]>();
                     try
                     {
-                        List<string> tmpStringParseList = Console.ReadLine()?.Split(' ').ToList();
+                        var tmpStringParseList = Console.ReadLine()?.Split(' ').ToList();
                         var vertexes1 = vertexes;
-                        tmpStringParseList?.ForEach(x => { vertexes1.Add(x.Split(",").Select(double.Parse).ToArray()); });
+                        tmpStringParseList?.ForEach(
+                            x => { vertexes1.Add(x.Split(",").Select(double.Parse).ToArray()); });
                     }
                     catch
                     {
@@ -358,15 +367,15 @@ namespace PrjModule6
                         continue;
                     }
                 }
-                
 
-                if (vertexes.Count == 3|| vertexes.Count==0)
+
+                if (vertexes.Count == 3 || vertexes.Count == 0)
                 {
                     Triangle triangle = null;
 
                     try
                     {
-                        if (triangleType==null)
+                        if (triangleType == null)
                         {
                             Console.WriteLine("\nChose triangle \n" +
                                               "ArbitraryTriangle - 1\n" +
@@ -376,7 +385,7 @@ namespace PrjModule6
 
                             triangleType = Console.ReadLine();
                         }
-                       
+
                         switch (triangleType)
                         {
                             case "ArbitraryTriangle":
@@ -410,7 +419,6 @@ namespace PrjModule6
 
                     while (true)
                     {
-
                         Console.WriteLine("\nChose method \n" +
                                           "GetArea-1\n" +
                                           "GetPerimeter-2\n" +
@@ -456,13 +464,14 @@ namespace PrjModule6
                                     Console.WriteLine(triangle?.GetInscribedCircleRadius());
                                     break;
                                 case "10":
-                                    BinaryFormatter formatter = new BinaryFormatter();
-                                    using (FileStream fs = new FileStream("Figure.dat", FileMode.Create))
+                                    var formatter = new BinaryFormatter();
+                                    using (var fs = new FileStream("Figure.dat", FileMode.Create))
                                     {
                                         formatter.Serialize(fs, triangle ?? throw new InvalidOperationException());
 
                                         Console.WriteLine("Object serialized");
                                     }
+
                                     break;
                                 default:
                                     ConsoleWithColor("\nThere no such method\n", ConsoleColor.Red);
@@ -495,12 +504,12 @@ namespace PrjModule6
                 vertexes.Clear();
             }
         }
+
         private static void ConsoleWithColor(string message, ConsoleColor color)
         {
             Console.ForegroundColor = color;
             Console.Write(message);
             Console.ResetColor();
         }
-
     }
 }

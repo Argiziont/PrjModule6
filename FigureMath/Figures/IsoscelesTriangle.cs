@@ -1,8 +1,8 @@
-﻿using FigureMath.Abstractions;
+﻿using System;
+using FigureMath.Abstractions;
 using FigureMath.Exceptions;
 using FigureMath.Helpers;
 using FigureMath.Interfaces;
-using System;
 
 namespace FigureMath.Figures
 {
@@ -10,22 +10,9 @@ namespace FigureMath.Figures
     public sealed class IsoscelesTriangle : Triangle, IComparer
     {
         private const double Tolerance = 0.01;
-        public override double[] AVertex { get; }
-
-        public override double[] BVertex { get; }
-
-        public override double[] CVertex { get; }
-
-        protected override double AbDirect => FigureMathHelper.GetDirectLength(AVertex, BVertex);
-
-        protected override double BcDirect => FigureMathHelper.GetDirectLength(BVertex, CVertex);
-
-        protected override double CaDirect => FigureMathHelper.GetDirectLength(CVertex, AVertex);
-
-        protected override double HalfPerimeter => (AbDirect + BcDirect + CaDirect) / 2;
 
         /// <summary>
-        /// Creates instance of isosceles triangle
+        ///     Creates instance of isosceles triangle
         /// </summary>
         /// <param name="aCords">A vertex coordinates</param>
         /// <param name="bCords">B vertex coordinates</param>
@@ -47,88 +34,27 @@ namespace FigureMath.Figures
             BVertex = bCords;
             CVertex = cCords;
 
-            if (!(Math.Abs(AbDirect - BcDirect) < Tolerance || Math.Abs(BcDirect - CaDirect) < Tolerance || Math.Abs(CaDirect - BcDirect) < Tolerance))
+            if (!(Math.Abs(AbDirect - BcDirect) < Tolerance || Math.Abs(BcDirect - CaDirect) < Tolerance ||
+                  Math.Abs(CaDirect - BcDirect) < Tolerance))
                 throw new FigureMathException("This is not isosceles triangle");
-
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Area of a figure</returns>
-        public override double GetArea()
-        {
-            return Math.Sqrt(HalfPerimeter * (HalfPerimeter - AbDirect) * (HalfPerimeter - BcDirect) * (HalfPerimeter - CaDirect));
-        }
+        public override double[] AVertex { get; }
+
+        public override double[] BVertex { get; }
+
+        public override double[] CVertex { get; }
+
+        protected override double AbDirect => FigureMathHelper.GetDirectLength(AVertex, BVertex);
+
+        protected override double BcDirect => FigureMathHelper.GetDirectLength(BVertex, CVertex);
+
+        protected override double CaDirect => FigureMathHelper.GetDirectLength(CVertex, AVertex);
+
+        protected override double HalfPerimeter => (AbDirect + BcDirect + CaDirect) / 2;
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Radius of a circumscribed circle</returns>
-        public override double GetCircumscribedCircleRadius()
-        {
-            return (AbDirect * BcDirect * CaDirect) / 4 * GetArea();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Array of heights</returns>
-        public override double[] GetHeight()
-        {
-            return new [] {
-            2*GetArea()/AbDirect,
-            2*GetArea()/BcDirect,
-            2*GetArea()/CaDirect
-            };
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Radius of a inscribed circle</returns>
-        public override double GetInscribedCircleRadius()
-        {
-            return GetArea() / HalfPerimeter;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Array of medians in triangle</returns>
-        public override double[] GetMedian()
-        {
-            return new [] {
-            Math.Sqrt((2*Math.Pow(BcDirect,2)+2*Math.Pow(CaDirect,2)-Math.Pow(AbDirect,2))/2),
-            Math.Sqrt((2*Math.Pow(AbDirect,2)+2*Math.Pow(CaDirect,2)-Math.Pow(BcDirect,2))/2),
-            Math.Sqrt((2*Math.Pow(AbDirect,2)+2*Math.Pow(BcDirect,2)-Math.Pow(CaDirect,2))/2)
-            };
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Perimeter of triangle</returns>
-        public override double GetPerimeter()
-        {
-            return AbDirect + BcDirect + CaDirect;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Array of lengths of sides of the triangle</returns>
-        public override double[] GetSides()
-        {
-            return new [] {
-            AbDirect,
-            BcDirect,
-            CaDirect
-            };
-        }
-
-        /// <summary>
-        /// Compares current figure with given
+        ///     Compares current figure with given
         /// </summary>
         /// <param name="figure">Your figure to compare</param>
         /// <returns>"0" if figures is equal "-1" if this figure area is less and "1" if this area is greater</returns>
@@ -142,28 +68,103 @@ namespace FigureMath.Figures
         }
 
         /// <summary>
-        /// 
         /// </summary>
-        /// <returns>Array of bisectors</returns>
-        public override double[] GetBisector()
+        /// <returns>Area of a figure</returns>
+        public override double GetArea()
         {
-            return new [] {
-            Math.Sqrt(AbDirect*BcDirect*(AbDirect+BcDirect+CaDirect)*(AbDirect+BcDirect-CaDirect))/(AbDirect+BcDirect),
-            Math.Sqrt(AbDirect*CaDirect*(AbDirect+BcDirect+CaDirect)*(AbDirect+CaDirect-BcDirect))/(AbDirect+CaDirect),
-            Math.Sqrt(BcDirect*CaDirect*(AbDirect+BcDirect+CaDirect)*(BcDirect+CaDirect-AbDirect))/(BcDirect+CaDirect),
+            return Math.Sqrt(HalfPerimeter * (HalfPerimeter - AbDirect) * (HalfPerimeter - BcDirect) *
+                             (HalfPerimeter - CaDirect));
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <returns>Radius of a circumscribed circle</returns>
+        public override double GetCircumscribedCircleRadius()
+        {
+            return AbDirect * BcDirect * CaDirect / 4 * GetArea();
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <returns>Array of heights</returns>
+        public override double[] GetHeight()
+        {
+            return new[]
+            {
+                2 * GetArea() / AbDirect,
+                2 * GetArea() / BcDirect,
+                2 * GetArea() / CaDirect
             };
         }
 
         /// <summary>
-        /// 
+        /// </summary>
+        /// <returns>Radius of a inscribed circle</returns>
+        public override double GetInscribedCircleRadius()
+        {
+            return GetArea() / HalfPerimeter;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <returns>Array of medians in triangle</returns>
+        public override double[] GetMedian()
+        {
+            return new[]
+            {
+                Math.Sqrt((2 * Math.Pow(BcDirect, 2) + 2 * Math.Pow(CaDirect, 2) - Math.Pow(AbDirect, 2)) / 2),
+                Math.Sqrt((2 * Math.Pow(AbDirect, 2) + 2 * Math.Pow(CaDirect, 2) - Math.Pow(BcDirect, 2)) / 2),
+                Math.Sqrt((2 * Math.Pow(AbDirect, 2) + 2 * Math.Pow(BcDirect, 2) - Math.Pow(CaDirect, 2)) / 2)
+            };
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <returns>Perimeter of triangle</returns>
+        public override double GetPerimeter()
+        {
+            return AbDirect + BcDirect + CaDirect;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <returns>Array of lengths of sides of the triangle</returns>
+        public override double[] GetSides()
+        {
+            return new[]
+            {
+                AbDirect,
+                BcDirect,
+                CaDirect
+            };
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <returns>Array of bisectors</returns>
+        public override double[] GetBisector()
+        {
+            return new[]
+            {
+                Math.Sqrt(AbDirect * BcDirect * (AbDirect + BcDirect + CaDirect) * (AbDirect + BcDirect - CaDirect)) /
+                (AbDirect + BcDirect),
+                Math.Sqrt(AbDirect * CaDirect * (AbDirect + BcDirect + CaDirect) * (AbDirect + CaDirect - BcDirect)) /
+                (AbDirect + CaDirect),
+                Math.Sqrt(BcDirect * CaDirect * (AbDirect + BcDirect + CaDirect) * (BcDirect + CaDirect - AbDirect)) /
+                (BcDirect + CaDirect)
+            };
+        }
+
+        /// <summary>
         /// </summary>
         /// <returns>Array of angles</returns>
         public override double[] GetAngles()
         {
-            return new[] {
-                FigureMathHelper.GetAngleBetweenVertex(AVertex,BVertex,CVertex),
-                FigureMathHelper.GetAngleBetweenVertex(BVertex,AVertex,CVertex),
-                FigureMathHelper.GetAngleBetweenVertex(AVertex,CVertex,BVertex),
+            return new[]
+            {
+                FigureMathHelper.GetAngleBetweenVertex(AVertex, BVertex, CVertex),
+                FigureMathHelper.GetAngleBetweenVertex(BVertex, AVertex, CVertex),
+                FigureMathHelper.GetAngleBetweenVertex(AVertex, CVertex, BVertex)
             };
         }
     }

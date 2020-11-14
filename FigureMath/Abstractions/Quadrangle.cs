@@ -6,7 +6,6 @@ namespace FigureMath.Abstractions
     [Serializable]
     public abstract class Quadrangle : IFigure
     {
-
         public abstract double[] AVertex { get; }
         public abstract double[] BVertex { get; }
         public abstract double[] CVertex { get; }
