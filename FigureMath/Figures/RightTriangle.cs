@@ -44,11 +44,11 @@ namespace FigureMath.Figures
             
         }
 
-        public override double[] AVertex { get; set; }
+        public override double[] AVertex { get; init; }
 
-        public override double[] BVertex { get; set; }
+        public override double[] BVertex { get; init; }
 
-        public override double[] CVertex { get; set; }
+        public override double[] CVertex { get; init; }
 
         protected override double AbDirect => FigureMathHelper.GetDirectLength(AVertex, BVertex);
 
