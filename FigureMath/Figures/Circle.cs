@@ -15,8 +15,11 @@ namespace FigureMath.Figures
         {
             Radius = radius;
         }
-
-        public double Radius { get; }
+        public Circle()
+        {
+            
+        }
+        public double Radius { get; set; }
 
         /// <summary>
         ///     Compares current figure with given

@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 using FigureMath.Abstractions;
 using FigureMath.Exceptions;
 using FigureMath.Figures;
+using FigureMath.Helpers;
 
 namespace PrjModule6
 {
     public static class Program
     {
-        private static void Main()
+        private static async Task Main()
         {
             //Dot in console
             var customCulture = (CultureInfo) Thread.CurrentThread.CurrentCulture.Clone();
@@ -27,47 +29,60 @@ namespace PrjModule6
                 switch (figureType)
                 {
                     case "circle":
-                        GetCircleMethods();
+                        await GetCircleMethods();
                         break;
                     case "quadrangle":
-                        GetQuadrangleMethods();
+                        await GetQuadrangleMethods();
                         break;
                     case "triangle":
-                        GetTriangleMethods();
+                        await GetTriangleMethods();
                         break;
                     case "deserialize":
-                        var formatter = new BinaryFormatter();
-                        if (File.Exists("Figure.dat"))
+                        if (File.Exists("Figure.json"))
                         {
-                            using var fs = new FileStream("Figure.dat", FileMode.OpenOrCreate);
-                            var figureDeserialize = formatter.Deserialize(fs);
-
-                            if (figureDeserialize.GetType().Name == "Circle")
+                            await using var fs = new FileStream("Figure.json", FileMode.Open);
+                            var deWrappedFigure = await JsonSerializer.DeserializeAsync<DeFigureWrapper>(fs);
+                            fs.Position = 0;
+                            switch (deWrappedFigure?.TypeOf)
                             {
-                                var circle = (Circle) figureDeserialize;
-                                Console.WriteLine("Deserializes object is Circle");
-                                GetCircleMethods(circle.Radius);
-                            }
+                                case "Circle":
+                                    var circleDeWrapped = await JsonSerializer.DeserializeAsync<FigureWrapper<Circle>>(fs);
+                                    var circle = circleDeWrapped?.WrapContent;
+                                    Console.WriteLine("Deserializes object is Circle");
 
-                            var baseType = figureDeserialize.GetType().BaseType?.Name;
-                            switch (baseType)
-                            {
-                                case "Quadrangle":
-                                    var quadrangle = (Quadrangle) figureDeserialize;
-                                    Console.WriteLine("Deserializes object is Quadrangle");
-                                    GetQuadrangleMethods(
+                                    if (circle != null) await GetCircleMethods(circle.Radius);
+                                    break;
+
+                                case "ArbitraryTriangle":
+                                case "EquilateralTriangle":
+                                case "IsoscelesTriangle":
+                                case "RightTriangle":
+                                    var triangleDeWrapped = await JsonSerializer.DeserializeAsync<FigureWrapper<ArbitraryTriangle>>(fs);
+                                    var triangle = triangleDeWrapped?.WrapContent;
+                                    Console.WriteLine("Deserializes object is Triangle");
+
+                                    await GetTriangleMethods(
                                         new List<double[]>
                                         {
-                                            quadrangle.AVertex, quadrangle.BVertex, quadrangle.CVertex,
-                                            quadrangle.DVertex
-                                        }, figureDeserialize.GetType().Name);
+                                            triangle?.AVertex, triangle?.BVertex, triangle?.CVertex
+                                        }, deWrappedFigure.TypeOf);
                                     break;
-                                case "Triangle":
-                                    var triangle = (Triangle) figureDeserialize;
-                                    Console.WriteLine("Deserializes object is Triangle");
-                                    GetTriangleMethods(
-                                        new List<double[]> {triangle.AVertex, triangle.BVertex, triangle.CVertex},
-                                        figureDeserialize.GetType().Name);
+
+                                case "Parallelogram":
+                                case "Rectangle":
+                                case "Rhombus":
+                                case "Square":
+                                case "Trapeze":
+                                    var quadrangleDeWrapped = await JsonSerializer.DeserializeAsync<FigureWrapper<Parallelogram>>(fs);
+                                    var quadrangle = quadrangleDeWrapped?.WrapContent;
+                                    Console.WriteLine("Deserializes object is Quadrangle");
+
+                                    await GetQuadrangleMethods(
+                                        new List<double[]>
+                                        {
+                                            quadrangle?.AVertex, quadrangle?.BVertex, quadrangle?.CVertex,
+                                            quadrangle?.DVertex
+                                        }, deWrappedFigure.TypeOf);
                                     break;
                                 default:
                                     ConsoleWithColor("\nWrong base type\n", ConsoleColor.Red);
@@ -102,7 +117,7 @@ namespace PrjModule6
             }
         }
 
-        private static void GetCircleMethods(double radius = 0)
+        private static async Task GetCircleMethods(double radius = 0)
         {
             while (true)
             {
@@ -112,9 +127,11 @@ namespace PrjModule6
                 if (double.TryParse(circleRadius, out radius))
                 {
                     Circle circle;
+                    FigureWrapper<Circle> wrappedCircle;
                     try
                     {
                         circle = new Circle(radius);
+                        wrappedCircle= new FigureWrapper<Circle>(){WrapContent = circle};
                     }
                     catch (FigureMathException e)
                     {
@@ -145,11 +162,9 @@ namespace PrjModule6
                                     circle.GetSides().ToList().ForEach(Console.WriteLine);
                                     break;
                                 case "4":
-                                    var formatter = new BinaryFormatter();
-                                    using (var fs = new FileStream("Figure.dat", FileMode.Create))
+                                    using (var fs = new FileStream("Figure.json", FileMode.Create))
                                     {
-                                        formatter.Serialize(fs, circle);
-
+                                        await JsonSerializer.SerializeAsync(fs, wrappedCircle);
                                         Console.WriteLine("Object serialized");
                                     }
 
@@ -185,7 +200,7 @@ namespace PrjModule6
             }
         }
 
-        private static void GetQuadrangleMethods(List<double[]> vertexes = null, string quadrangleType = null)
+        private static async Task GetQuadrangleMethods(List<double[]> vertexes = null, string quadrangleType = null)
         {
             while (true)
             {
@@ -213,6 +228,7 @@ namespace PrjModule6
                 if (vertexes.Count == 4 || vertexes.Count == 0)
                 {
                     Quadrangle quadrangle = null;
+                    dynamic wrappedQuadrangle = null;
 
                     try
                     {
@@ -233,22 +249,27 @@ namespace PrjModule6
                             case "Parallelogram":
                             case "1":
                                 quadrangle = new Parallelogram(vertexes[0], vertexes[1], vertexes[2], vertexes[3]);
+                                wrappedQuadrangle = new FigureWrapper<Parallelogram>() { WrapContent = (Parallelogram)quadrangle };
                                 break;
                             case "Rectangle":
                             case "2":
                                 quadrangle = new Rectangle(vertexes[0], vertexes[1], vertexes[2], vertexes[3]);
+                                wrappedQuadrangle = new FigureWrapper<Rectangle>() { WrapContent = (Rectangle)quadrangle };
                                 break;
                             case "Square":
                             case "3":
                                 quadrangle = new Square(vertexes[0], vertexes[1], vertexes[2], vertexes[3]);
+                                wrappedQuadrangle = new FigureWrapper<Square>() { WrapContent = (Square)quadrangle };
                                 break;
                             case "Rhombus":
                             case "4":
                                 quadrangle = new Rhombus(vertexes[0], vertexes[1], vertexes[2], vertexes[3]);
+                                wrappedQuadrangle = new FigureWrapper<Rhombus>() { WrapContent = (Rhombus)quadrangle };
                                 break;
                             case "Trapeze":
                             case "5":
                                 quadrangle = new Trapeze(vertexes[0], vertexes[1], vertexes[2], vertexes[3]);
+                                wrappedQuadrangle = new FigureWrapper<Trapeze>() { WrapContent = (Trapeze)quadrangle };
                                 break;
                             default:
                                 ConsoleWithColor("\nThere no such Figure\n", ConsoleColor.Red);
@@ -275,10 +296,10 @@ namespace PrjModule6
                                           "GetInscribedCircleRadius-7\n" +
                                           "Serialize object-8\n");
 
-                        var circleMethod = Console.ReadLine();
+                        var quadrangleMethod = Console.ReadLine();
                         try
                         {
-                            switch (circleMethod)
+                            switch (quadrangleMethod)
                             {
                                 case "1":
                                     Console.WriteLine(quadrangle?.GetArea());
@@ -302,11 +323,9 @@ namespace PrjModule6
                                     Console.WriteLine(quadrangle?.GetInscribedCircleRadius());
                                     break;
                                 case "8":
-                                    var formatter = new BinaryFormatter();
-                                    using (var fs = new FileStream("Figure.dat", FileMode.Create))
+                                    using (var fs = new FileStream("Figure.json", FileMode.Create))
                                     {
-                                        formatter.Serialize(fs, quadrangle ?? throw new InvalidOperationException());
-
+                                        await JsonSerializer.SerializeAsync(fs, wrappedQuadrangle);
                                         Console.WriteLine("Object serialized");
                                     }
 
@@ -344,7 +363,7 @@ namespace PrjModule6
             }
         }
 
-        private static void GetTriangleMethods(List<double[]> vertexes = null, string triangleType = null)
+        private static async Task GetTriangleMethods(List<double[]> vertexes = null, string triangleType = null)
         {
             while (true)
             {
@@ -372,7 +391,7 @@ namespace PrjModule6
                 if (vertexes.Count == 3 || vertexes.Count == 0)
                 {
                     Triangle triangle = null;
-
+                    dynamic wrappedTriangle = null;
                     try
                     {
                         if (triangleType == null)
@@ -391,18 +410,22 @@ namespace PrjModule6
                             case "ArbitraryTriangle":
                             case "1":
                                 triangle = new ArbitraryTriangle(vertexes[0], vertexes[1], vertexes[2]);
+                                wrappedTriangle = new FigureWrapper<ArbitraryTriangle>() { WrapContent = (ArbitraryTriangle)triangle };
                                 break;
                             case "EquilateralTriangle":
                             case "2":
                                 triangle = new EquilateralTriangle(vertexes[0], vertexes[1], vertexes[2]);
+                                wrappedTriangle = new FigureWrapper<EquilateralTriangle>() { WrapContent = (EquilateralTriangle)triangle };
                                 break;
                             case "IsoscelesTriangle":
                             case "3":
                                 triangle = new IsoscelesTriangle(vertexes[0], vertexes[1], vertexes[2]);
+                                wrappedTriangle = new FigureWrapper<IsoscelesTriangle>() { WrapContent = (IsoscelesTriangle)triangle };
                                 break;
                             case "RightTriangle":
                             case "4":
                                 triangle = new RightTriangle(vertexes[0], vertexes[1], vertexes[2]);
+                                wrappedTriangle = new FigureWrapper<RightTriangle>() { WrapContent = (RightTriangle)triangle };
                                 break;
                             default:
                                 ConsoleWithColor("\nThere no such Figure\n", ConsoleColor.Red);
@@ -431,10 +454,10 @@ namespace PrjModule6
                                           "GetInscribedCircleRadius-9\n" +
                                           "Serialize object-10\n");
 
-                        var circleMethod = Console.ReadLine();
+                        var triangleMethod = Console.ReadLine();
                         try
                         {
-                            switch (circleMethod)
+                            switch (triangleMethod)
                             {
                                 case "1":
                                     Console.WriteLine(triangle?.GetArea());
@@ -464,14 +487,11 @@ namespace PrjModule6
                                     Console.WriteLine(triangle?.GetInscribedCircleRadius());
                                     break;
                                 case "10":
-                                    var formatter = new BinaryFormatter();
-                                    using (var fs = new FileStream("Figure.dat", FileMode.Create))
+                                    using (var fs = new FileStream("Figure.json", FileMode.Create))
                                     {
-                                        formatter.Serialize(fs, triangle ?? throw new InvalidOperationException());
-
+                                        await JsonSerializer.SerializeAsync(fs, wrappedTriangle);
                                         Console.WriteLine("Object serialized");
                                     }
-
                                     break;
                                 default:
                                     ConsoleWithColor("\nThere no such method\n", ConsoleColor.Red);

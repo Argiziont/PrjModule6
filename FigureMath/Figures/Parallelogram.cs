@@ -42,10 +42,15 @@ namespace FigureMath.Figures
                 throw new FigureMathException("This is not parallelogram");
         }
 
-        public override double[] AVertex { get; }
-        public override double[] BVertex { get; }
-        public override double[] CVertex { get; }
-        public override double[] DVertex { get; }
+        public Parallelogram()
+        {
+            
+        }
+
+        public override double[] AVertex { get; set; }
+        public override double[] BVertex { get; set; }
+        public override double[] CVertex { get; set; }
+        public override double[] DVertex { get; set; }
         protected override double AbDirect => FigureMathHelper.GetDirectLength(AVertex, BVertex);
 
         protected override double BcDirect => FigureMathHelper.GetDirectLength(BVertex, CVertex);
