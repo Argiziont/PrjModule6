@@ -49,8 +49,15 @@ namespace PrjModule6
                                     var circleDeWrapped = await JsonSerializer.DeserializeAsync<FigureWrapper<Circle>>(fs);
                                     var circle = circleDeWrapped?.WrapContent;
                                     Console.WriteLine("Deserializes object is Circle");
-
-                                    if (circle != null) await GetCircleMethods(circle.Radius);
+                                    try
+                                    {
+                                        if (circle != null) await GetCircleMethods(circle.Radius);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        ConsoleWithColor("\n" + e.Message + "\n", ConsoleColor.Red);
+                                        throw;
+                                    }
                                     break;
 
                                 case "ArbitraryTriangle":
@@ -60,12 +67,20 @@ namespace PrjModule6
                                     var triangleDeWrapped = await JsonSerializer.DeserializeAsync<FigureWrapper<ArbitraryTriangle>>(fs);
                                     var triangle = triangleDeWrapped?.WrapContent;
                                     Console.WriteLine("Deserializes object is Triangle");
-
-                                    await GetTriangleMethods(
-                                        new List<double[]>
-                                        {
-                                            triangle?.AVertex, triangle?.BVertex, triangle?.CVertex
-                                        }, deWrappedFigure.TypeOf);
+                                    try
+                                    {
+                                        await GetTriangleMethods(
+                                            new List<double[]>
+                                            {
+                                                triangle?.AVertex, triangle?.BVertex, triangle?.CVertex
+                                            }, deWrappedFigure.TypeOf);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        ConsoleWithColor("\n"+e.Message+"\n", ConsoleColor.Red);
+                                        throw;
+                                    }
+                                    
                                     break;
 
                                 case "Parallelogram":
@@ -76,13 +91,20 @@ namespace PrjModule6
                                     var quadrangleDeWrapped = await JsonSerializer.DeserializeAsync<FigureWrapper<Parallelogram>>(fs);
                                     var quadrangle = quadrangleDeWrapped?.WrapContent;
                                     Console.WriteLine("Deserializes object is Quadrangle");
-
-                                    await GetQuadrangleMethods(
+                                    try
+                                    {
+                                        await GetQuadrangleMethods(
                                         new List<double[]>
                                         {
                                             quadrangle?.AVertex, quadrangle?.BVertex, quadrangle?.CVertex,
                                             quadrangle?.DVertex
                                         }, deWrappedFigure.TypeOf);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        ConsoleWithColor("\n" + e.Message + "\n", ConsoleColor.Red);
+                                        throw;
+                                    }
                                     break;
                                 default:
                                     ConsoleWithColor("\nWrong base type\n", ConsoleColor.Red);
@@ -101,7 +123,7 @@ namespace PrjModule6
                         break;
                 }
 
-                Console.WriteLine("Press 'e' for exit or enter for continue");
+                Console.WriteLine("Press 'any key' for exit or enter for continue");
 
                 var exitState = Console.ReadKey();
                 switch (exitState.Key)
@@ -162,9 +184,16 @@ namespace PrjModule6
                                     circle.GetSides().ToList().ForEach(Console.WriteLine);
                                     break;
                                 case "4":
-                                    using (var fs = new FileStream("Figure.json", FileMode.Create))
+                                    await using (var fs = new FileStream("Figure.json", FileMode.Create))
                                     {
-                                        await JsonSerializer.SerializeAsync(fs, wrappedCircle);
+                                        try
+                                        {
+                                            await JsonSerializer.SerializeAsync(fs, wrappedCircle);
+                                        }
+                                        catch
+                                        {
+                                            throw new Exception("\nCouldn't serialize deserialized object\n");
+                                        }
                                         Console.WriteLine("Object serialized");
                                     }
 
@@ -181,7 +210,7 @@ namespace PrjModule6
                         }
 
 
-                        Console.WriteLine("Press 'e' for exit or enter for continue");
+                        Console.WriteLine("Press 'any key' for exit or enter for continue");
 
                         var exitState = Console.ReadKey();
                         switch (exitState.Key)
@@ -323,9 +352,19 @@ namespace PrjModule6
                                     Console.WriteLine(quadrangle?.GetInscribedCircleRadius());
                                     break;
                                 case "8":
-                                    using (var fs = new FileStream("Figure.json", FileMode.Create))
+                                    await using (var fs = new FileStream("Figure.json", FileMode.Create))
                                     {
-                                        await JsonSerializer.SerializeAsync(fs, wrappedQuadrangle);
+                                        try
+                                        {
+                                            await JsonSerializer.SerializeAsync(fs, wrappedQuadrangle);
+
+                                        }
+                                        catch
+                                        {
+                                            throw new Exception("\nCouldn't serialize deserialized object\n");
+
+                                        }
+
                                         Console.WriteLine("Object serialized");
                                     }
 
@@ -343,7 +382,7 @@ namespace PrjModule6
                         }
 
 
-                        Console.WriteLine("Press 'e' for exit or enter for continue");
+                        Console.WriteLine("Press 'any key' for exit or enter for continue");
 
                         var exitState = Console.ReadKey();
                         switch (exitState.Key)
@@ -487,9 +526,17 @@ namespace PrjModule6
                                     Console.WriteLine(triangle?.GetInscribedCircleRadius());
                                     break;
                                 case "10":
-                                    using (var fs = new FileStream("Figure.json", FileMode.Create))
+                                    await using (var fs = new FileStream("Figure.json", FileMode.Create))
                                     {
-                                        await JsonSerializer.SerializeAsync(fs, wrappedTriangle);
+                                        try
+                                        {
+                                            await JsonSerializer.SerializeAsync(fs, wrappedTriangle);
+                                        }
+                                        catch
+                                        {
+                                            throw new Exception("\nCouldn't serialize deserialized object\n");
+                                           
+                                        }
                                         Console.WriteLine("Object serialized");
                                     }
                                     break;
@@ -505,7 +552,7 @@ namespace PrjModule6
                             continue;
                         }
 
-                        Console.WriteLine("Press 'e' for exit or enter for continue");
+                        Console.WriteLine("Press 'any key' for exit or enter for continue");
 
                         var exitState = Console.ReadKey();
                         switch (exitState.Key)

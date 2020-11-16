@@ -19,7 +19,7 @@ namespace FigureMath.Figures
         {
             
         }
-        public double Radius { get; set; }
+        public double Radius { get; init; }
 
         /// <summary>
         ///     Compares current figure with given

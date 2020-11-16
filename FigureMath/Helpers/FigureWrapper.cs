@@ -6,14 +6,9 @@ using System.Threading.Tasks;
 
 namespace FigureMath.Helpers
 {
-    public class FigureWrapper<T>
+    public sealed record FigureWrapper<T>
     {
         public string TypeOf => typeof(T).Name;
-        public T WrapContent { get; set; }
-    }
-    public class DeFigureWrapper
-    {
-        public string TypeOf { get; set; }
-        public object WrapContent { get; set; }
+        public T WrapContent { get; init; }
     }
 }
