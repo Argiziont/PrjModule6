@@ -41,11 +41,16 @@ namespace FigureMath.Figures
                 throw new FigureMathException("This is not equilateral triangle");
         }
 
-        public override double[] AVertex { get; }
+        public EquilateralTriangle()
+        {
+            
+        }
 
-        public override double[] BVertex { get; }
+        public override double[] AVertex { get; set; }
 
-        public override double[] CVertex { get; }
+        public override double[] BVertex { get; set; }
+
+        public override double[] CVertex { get; set; }
 
         protected override double AbDirect => FigureMathHelper.GetDirectLength(AVertex, BVertex);
 

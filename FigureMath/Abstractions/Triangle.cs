@@ -1,14 +1,13 @@
 ﻿using System;
 using FigureMath.Interfaces;
-
 namespace FigureMath.Abstractions
 {
     [Serializable]
     public abstract class Triangle : IFigure
     {
-        public abstract double[] AVertex { get; }
-        public abstract double[] BVertex { get; }
-        public abstract double[] CVertex { get; }
+        public abstract double[] AVertex { get; set; }
+        public abstract double[] BVertex { get; set; }
+        public abstract double[] CVertex { get; set; }
         protected abstract double AbDirect { get; }
         protected abstract double BcDirect { get; }
         protected abstract double CaDirect { get; }
